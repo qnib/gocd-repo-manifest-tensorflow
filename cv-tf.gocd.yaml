@@ -1,0 +1,27 @@
+format_version: 3
+environments:
+  generic:
+    environment_variables:
+      DOCKER_TAG: latest
+      DOCKER_NO_CACHE: false
+      DOCKER_BUILD_LOCAL: true
+      #DOCKER_REG: docker.io
+      #DOCKER_REGISTRY: docker.io
+      #FROM_IMG_REGISTRY: docker.io
+      #UCP_USER: test123
+      #DOCKER_REGISTRY_INSECURE: true
+    pipelines:
+      - cv-tf.1.12.0
+pipelines:
+  cv-tf.1.12.0:
+    group: manifest
+    template: manifestTool
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_USE_LOGIN: 'true'
+    materials:
+      cv-tf-dev.1.12.0:
+        pipeline: cv-tf-dev.1.12.0
+        stage: DockerBuild
+        name: cv-tf-dev.1.12.0
