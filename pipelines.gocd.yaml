@@ -515,7 +515,7 @@ pipelines:
         stage: DockerBuild
         name: cv-nccl92-tf-dev.broadwell_1.12.0
       cv-nccl92-tf-dev.nvcap37_1.12.0:
-        pipeline: cv-nccl92-tf-dev.nvcap52_1.12.0
+        pipeline: cv-nccl92-tf-dev.nvcap37_1.12.0
         stage: DockerBuild
         name: cv-nccl92-tf-dev.nvcap37_1.12.0
       cv-nccl92-tf-dev.broadwell_nvcap37_1.12.0:
