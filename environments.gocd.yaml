@@ -16,7 +16,9 @@ environments:
       - cv-cudnn92
       - cv-nccl92-tf-jupyter-dev.1.12.0
       - cv-nccl92-tf-jupyter-dev.broadwell_1.12.0
+      - cv-nccl92-tf-jupyter-dev.nvcap37_1.12.0
       - cv-nccl92-tf-jupyter-dev.nvcap52_1.12.0
+      - cv-nccl92-tf-jupyter-dev.broadwell_nvcap37_1.12.0
       - cv-nccl92-tf-jupyter-dev.broadwell_nvcap52_1.12.0
       - cv-tf.1.12.0
       - cv-tf-jupyter.1.12.0
@@ -29,10 +31,14 @@ environments:
     pipelines:
       - cv-tf-dev.1.12.0
       - cv-nccl92
-      - cv-nccl92.nvcap52
       - cv-nccl92.broadwell
+      - cv-nccl92.nvcap52
       - cv-nccl92.broadwell_nvcap52
+      - cv-nccl92.nvcap37
+      - cv-nccl92.broadwell_nvcap37
       - cv-nccl92-tf-dev.1.12.0
       - cv-nccl92-tf-dev.broadwell_1.12.0
       - cv-nccl92-tf-dev.nvcap52_1.12.0
       - cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0
+      - cv-nccl92-tf-dev.nvcap37_1.12.0
+      - cv-nccl92-tf-dev.broadwell_nvcap37_1.12.0
