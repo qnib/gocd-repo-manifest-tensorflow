@@ -12,6 +12,8 @@ environments:
       - cv-dev
       - cv-bazel-dev
       - cv-tf-jupyter-dev.1.12.0
+      - cv-cuda92
+      - cv-cudnn92
       - cv-nccl92-tf-jupyter-dev.1.12.0
       - cv-nccl92-tf-jupyter-dev.broadwell_1.12.0
       - cv-nccl92-tf-jupyter-dev.nvcap52_1.12.0
