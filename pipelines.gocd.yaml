@@ -1,0 +1,390 @@
+format_version: 3
+pipelines:
+  uplain-init:
+    group: docker
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: bionic/Dockerfile
+    materials:
+      init-plain:
+        git: https://github.com/qnib/init-plain.git
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: init-plain
+      docker:
+        git: https://github.com/qnib/uplain-init.git
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+  pip3-dev:
+    group: docker
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-pip3
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      uplain-init:
+        pipeline: uplain-init
+        stage: DockerBuild
+        name: uplain-init
+  cv-dev:
+    group: docker
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-pip3-cv-dev
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      pip3-dev:
+        pipeline: pip3-dev
+        stage: DockerBuild
+        name: pip3-dev
+  cv-bazel-dev:
+    group: docker
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-bazel
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-dev:
+        pipeline: cv-dev
+        stage: DockerBuild
+        name: cv-dev
+  cv-tf-dev.1.12.0:
+    group: cpu
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DBUILD_BUILD_THREADS: '8'
+      DBUILD_TF_GIT_VER: 1.12.0
+      DBUILD_TF_GIT_CHECKOUT: v
+      DBUILD_CFLAG_MARCH: x86-64
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-bazel-tensorflow
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-bazel-dev:
+        pipeline: cv-bazel-dev
+        stage: DockerBuild
+        name: cv-bazel-dev
+  cv-cuda92:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.bionic.9-2
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-cuda
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-bazel-dev:
+        pipeline: cv-bazel-dev
+        stage: DockerBuild
+        name: cv-bazel-dev
+  cv-cudnn92:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.9-2
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-cudnn
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-cuda92:
+        pipeline: cv-cuda92
+        stage: DockerBuild
+        name: cv-cuda92
+  cv-nccl92:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.9.2
+      DBUILD_CFLAG_MARCH: x86-64
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-nccl
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-cudnn92:
+        pipeline: cv-cudnn92
+        stage: DockerBuild
+        name: cv-cudnn92
+  cv-nccl92.broadwell:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.9.2
+      DBUILD_CFLAG_MARCH: broadwell
+      PLATFORM_FEATURES: broadwell
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-nccl
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-cudnn92:
+        pipeline: cv-cudnn92
+        stage: DockerBuild
+        name: cv-cudnn92
+  cv-nccl92.broadwell_nvcap52:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.9.2
+      DBUILD_CFLAG_MARCH: broadwell
+      PLATFORM_FEATURES: broadwell
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-nccl
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-cudnn92:
+        pipeline: cv-cudnn92
+        stage: DockerBuild
+        name: cv-cudnn92
+  cv-nccl92-tf-dev.1.12.0:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.cuda
+      DBUILD_BUILD_THREADS: '8'
+      DBUILD_TF_CUDA_VER: '-9.2'
+      DBUILD_CFLAG_MARCH: x86-64
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-bazel-tensorflow
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-nccl92:
+        pipeline: cv-nccl92
+        stage: DockerBuild
+        name: cv-nccl92
+  cv-nccl92-tf-dev.broadwell_1.12.0:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.cuda
+      DBUILD_BUILD_THREADS: '8'
+      DBUILD_TF_CUDA_VER: '-9.2'
+      DBUILD_CFLAG_MARCH: broadwell
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-bazel-tensorflow
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-nccl92.broadwell:
+        pipeline: cv-nccl92.broadwell
+        stage: DockerBuild
+        name: cv-nccl92.broadwell
+  cv-nccl92-tf-dev.nvcap52_1.12.0:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.cuda
+      DBUILD_BUILD_THREADS: '8'
+      DBUILD_TF_CUDA_VER: '-9.2'
+      DBUILD_CFLAG_MARCH: x86-64
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-bazel-tensorflow
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-nccl92.nvcap52:
+        pipeline: cv-nccl92.nvcap52
+        stage: DockerBuild
+        name: cv-nccl92.nvcap52
+  cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_FILE: Dockerfile.cuda
+      DBUILD_BUILD_THREADS: '8'
+      DBUILD_TF_CUDA_VER: '-9.2'
+      DBUILD_CFLAG_MARCH: broadwell
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-bazel-tensorflow
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-nccl92.broadwell_nvcap52:
+        pipeline: cv-nccl92.broadwell_nvcap52
+        stage: DockerBuild
+        name: cv-nccl92.broadwell_nvcap52
+  cv-nccl92-tf-jupyter-dev.1.12.0:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-pip3-jupyter
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-nccl92-tf-dev.1.12.0:
+        pipeline: cv-nccl92-tf-dev.1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-dev.1.12.0
+  cv-nccl92-tf-jupyter-dev.broadwell_1.12.0:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-pip3-jupyter
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-nccl92-tf-dev.broadwell_1.12.0:
+        pipeline: cv-nccl92-tf-dev.broadwell_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-dev.broadwell_1.12.0
+  cv-nccl92-tf-jupyter-dev.nvcap52_1.12.0:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-pip3-jupyter
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-nccl92-tf-dev.nvcap52_1.12.0:
+        pipeline: cv-nccl92-tf-dev.nvcap52_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-dev.nvcap52_1.12.0
+  cv-nccl92-tf-jupyter-dev.broadwell_nvcap52_1.12.0:
+    group: cuda-9.2
+    template: DockerBuild
+    label_template: ${COUNT}
+    lock_behavior: none
+    materials:
+      git:
+        git: https://github.com/qnib/uplain-pip3-jupyter
+        shallow_clone: false
+        auto_update: true
+        branch: master
+        destination: docker
+      cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0:
+        pipeline: cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0
+  cv-tf.1.12.0:
+    group: manifest
+    template: manifestTool
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_USE_LOGIN: 'true'
+    materials:
+      cv-tf-dev.1.12.0:
+        pipeline: cv-tf-dev.1.12.0
+        stage: DockerBuild
+        name: cv-tf-dev.1.12.0
+      cv-nccl92-tf-dev.1.12.0:
+        pipeline: cv-nccl92-tf-dev.1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-dev.1.12.0
+      cv-nccl92-tf-dev.broadwell_1.12.0:
+        pipeline: cv-nccl92-tf-dev.broadwell_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-dev.broadwell_1.12.0
+      cv-nccl92-tf-dev.nvcap52_1.12.0:
+        pipeline: cv-nccl92-tf-dev.nvcap52_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-dev.nvcap52_1.12.0
+      cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0:
+        pipeline: cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0
+  cv-tf-jupyter.1.12.0:
+    group: manifest
+    template: manifestTool
+    label_template: ${COUNT}
+    lock_behavior: none
+    environment_variables:
+      DOCKER_USE_LOGIN: 'true'
+    materials:
+      cv-tf-jupyter-dev.1.12.0:
+        pipeline: cv-tf-jupyter-dev.1.12.0
+        stage: DockerBuild
+        name: cv-tf-jupyter-dev.1.12.0
+      cv-nccl92-tf-jupyter-dev.1.12.0:
+        pipeline: cv-nccl92-tf-jupyter-dev.1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-jupyter-dev.1.12.0
+      cv-nccl92-tf-jupyter-dev.broadwell_1.12.0:
+        pipeline: cv-nccl92-tf-jupyter-dev.broadwell_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-jupyter-dev.broadwell_1.12.0
+      cv-nccl92-tf-jupyter-dev.nvcap52_1.12.0:
+        pipeline: cv-nccl92-tf-jupyter-dev.nvcap52_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-jupyter-dev.nvcap52_1.12.0
+      cv-nccl92-tf-jupyter-dev.broadwell_nvcap52_1.12.0:
+        pipeline: cv-nccl92-tf-jupyter-dev.broadwell_nvcap52_1.12.0
+        stage: DockerBuild
+        name: cv-nccl92-tf-jupyter-dev.broadwell_nvcap52_1.12.0

@@ -1,0 +1,42 @@
+format_version: 3
+environments:
+  generic:
+    environment_variables:
+      DOCKER_TAG: latest
+      DOCKER_NO_CACHE: false
+      DOCKER_BUILD_LOCAL: true
+      DOCKER_REG: docker.io
+      DOCKER_REGISTRY: docker.io
+      FROM_IMG_REGISTRY: docker.io
+      UCP_USER: moby
+      DOCKER_REGISTRY_INSECURE: true
+    pipelines:
+      - uplain-init
+      - pip3-dev
+      - cv-dev
+      - cv-bazel-dev
+      - cv-nccl92-tf-jupyter-dev.1.12.0
+      - cv-nccl92-tf-jupyter-dev.broadwell_1.12.0
+      - cv-nccl92-tf-jupyter-dev.nvcap52_1.12.0
+      - cv-nccl92-tf-jupyter-dev.broadwell_nvcap52_1.12.0
+      - cv-tf.1.12.0
+      - cv-tf-jupyter.1.12.0
+  performance:
+    environment_variables:
+      DOCKER_TAG: latest
+      DOCKER_NO_CACHE: false
+      DOCKER_BUILD_LOCAL: true
+      DOCKER_REG: docker.io
+      DOCKER_REGISTRY: docker.io
+      FROM_IMG_REGISTRY: docker.io
+      UCP_USER: moby
+      DOCKER_REGISTRY_INSECURE: true
+    pipelines:
+      - cv-tf-dev.1.12.0
+      - cv-nccl92
+      - cv-nccl92.broadwell
+      - cv-nccl92.broadwell_nvcap52
+      - cv-nccl92-tf-dev.1.12.0
+      - cv-nccl92-tf-dev.broadwell_1.12.0
+      - cv-nccl92-tf-dev.nvcap52_1.12.0
+      - cv-nccl92-tf-dev.broadwell_nvcap52_1.12.0
